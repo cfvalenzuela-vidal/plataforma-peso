@@ -47,8 +47,8 @@ jobs:
         shell: pwsh
 
       - name: Start API server in background
-        run: start /b python src/api.py
-        shell: cmd
+        shell: pwsh
+        run: Start-Job -ScriptBlock { python src/api.py }
 
       - name: Wait for server to start (up to 30s)
         shell: pwsh
