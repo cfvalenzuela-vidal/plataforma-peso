@@ -15,10 +15,11 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Cache Playwright browsers
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
-          path: C:/Users/runneradmin/AppData/Local/ms-playwright
-          key: playwright-browsers-${{ runner.os }}-v1
+          path: |
+            ~\AppData\Local\ms-playwright
+          key: playwright-browsers-${{ runner.os }}-${{ hashFiles('**/requirements.txt') }}
           restore-keys: |
             playwright-browsers-${{ runner.os }}-
 
