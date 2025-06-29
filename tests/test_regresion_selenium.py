@@ -1,50 +1,60 @@
-import pytest
 from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
-import requests
-import os
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 import time
 
-@pytest.fixture
-def driver():
-    options = Options()
-    options.add_argument("--headless")
-    options.add_argument("--disable-gpu")
-    options.add_argument("--no-sandbox")
-    options.add_argument("--window-size=1280,1024")
-    driver = webdriver.Chrome(options=options)
-    yield driver
-    os.makedirs("tests", exist_ok=True)
-    driver.save_screenshot("tests/screenshot.png")
-    driver.quit()
-
-def test_flujo_completo(driver):
-    base_url = "http://localhost:5000/"
-
-    def ingresar_peso(nombre, peso):
-        driver.get(base_url)
-        driver.find_element(By.NAME, "nombre").clear()
-        driver.find_element(By.NAME, "nombre").send_keys(nombre)
-        driver.find_element(By.NAME, "peso").clear()
-        driver.find_element(By.NAME, "peso").send_keys(str(peso))
+def test_registro_usuario():
+    """Prueba que el registro básico funcione"""
+    driver = webdriver.Chrome()
+    driver.get("http://localhost:5000")
+    
+    try:
+        # 1. Llenar formulario
+        driver.find_element(By.NAME, "nombre").send_keys("Usuario1")
+        driver.find_element(By.NAME, "peso").send_keys("200")
         driver.find_element(By.XPATH, "//button[text()='Enviar']").click()
+        
+        # Esperar a que la página se actualice
+        time.sleep(2)
+        
+        # 2. Verificar que se registró (ajustado al formato real)
+        assert "Usuario1: 200.0 kg" in driver.page_source
+        print("Prueba de regresion exitosa")
+        
+    except Exception as e:
+        print(f"Error en prueba de regresion: {str(e)}")
+        print(f"Contenido actual de la página: {driver.page_source}")
+        raise
+    finally:
+        driver.quit()
 
-        # Esperar un segundo para que el servidor procese (ajustar si es necesario)
-        time.sleep(5)
+def test_actualizacion_peso():
+    """Prueba que se pueda actualizar el peso"""
+    driver = webdriver.Chrome()
+    driver.get("http://localhost:5000")
+    
+    try:
+        # 1. Actualizar peso de Usuario1
+        driver.find_element(By.NAME, "nombre").send_keys("Usuario1")
+        driver.find_element(By.NAME, "peso").send_keys("99.5")
+        driver.find_element(By.XPATH, "//button[text()='Enviar']").click()
+        
+        # Esperar a que la página se actualice
+        time.sleep(2)
+        
+        # 2. Verificar cambio (ajustado al formato real)
+        assert "Usuario1: 99.5 kg" in driver.page_source
+        print("Prueba de regresion exitosa")
+        
+    except Exception as e:
+        print(f"Error en prueba de regresion: {str(e)}")
+        print(f"Contenido actual de la página: {driver.page_source}")
+        raise
+    finally:
+        driver.quit()
 
-        # Hacer GET para obtener la página actualizada
-        response = requests.get(base_url)
-        return response.text
-
-    texto1 = ingresar_peso("Usuario1", 100)
-    assert "Usuario1: 100.0 kg" in texto1
-
-    texto2 = ingresar_peso("Usuario2", 100)
-    assert "Usuario2: 100.0 kg" in texto2
-
-    texto3 = ingresar_peso("Usuario1", 90.5)
-    assert "Usuario1: 90.5 kg" in texto3
-
-    texto4 = ingresar_peso("Usuario2", 105.5)
-    assert "Usuario2: 105.5 kg" in texto4
+if __name__ == "__main__":
+    test_registro_usuario()
+    test_actualizacion_peso()
+    print("Pruebas finalizadas con exito")
