@@ -35,12 +35,12 @@ jobs:
           pip install -r requirements.txt
 
       - name: Start API server in background
-        run: |
-          start /b python src/api.py
+        run: start /b python src/api.py
         shell: cmd
 
       - name: Wait for server to start
-        run: timeout /t 5
+        run: ping -n 6 127.0.0.1 > nul
+        shell: cmd
 
       - name: Run tests
         run: pytest .\tests\test_api.py -v
