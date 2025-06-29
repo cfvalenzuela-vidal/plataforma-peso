@@ -38,17 +38,17 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Mostrar procesos que usan el puerto 5000
+      - name: Testear conexión a Flask
         shell: cmd
-        run: netstat -ano | findstr :5000 || exit 0
+        run: curl http://127.0.0.1:5000/  
 
       - name: Start API server in background
         run: start /b python src/api.py
         shell: cmd
 
-      - name: Mostrar procesos que usan el puerto 5000
+      - name: Testear conexión a Flask
         shell: cmd
-        run: netstat -ano | findstr :5000 || exit 0
+        run: curl http://127.0.0.1:5000/
         
       - name: Wait for server to start
         run: ping -n 6 127.0.0.1 > nul
