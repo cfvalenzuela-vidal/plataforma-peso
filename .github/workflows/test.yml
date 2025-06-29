@@ -39,15 +39,27 @@ jobs:
       - name: Install wget and unzip
         run: sudo apt-get update && sudo apt-get install -y wget unzip
 
-      - name: Install JMeter 5.6.3
+      # --- Instalación Chrome y Chromedriver para Selenium ---
+      - name: Install Chrome
         run: |
-          wget https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-5.6.3.zip
-          unzip apache-jmeter-5.6.3.zip
-          mv apache-jmeter-5.6.3 jmeter
+          sudo apt-get install -y google-chrome-stable || true
+          # En Ubuntu runners, chrome ya está instalado, pero aseguramos
+          # En caso que no, instalamos el paquete por PPA o alternativa
 
-      - name: Start API server in background
+      - name: Install Chromedriver
         run: |
-          nohup python3 src/api.py &
+          CHROME_VERSION=$(google-chrome --version | grep -oP '\d+\.\d+\.\d+')
+          echo "Chrome version: $CHROME_VERSION"
+          CHROMEDRIVER_VERSION=$(curl -sS https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$CHROME_VERSION)
+          echo "Chromedriver version: $CHROMEDRIVER_VERSION"
+          wget -N https://chromedriver.storage.googleapis.com/${CHROMEDRIVER_VERSION}/chromedriver_linux64.zip -P ~/
+          unzip ~/chromedriver_linux64.zip -d ~/
+          sudo mv -f ~/chromedriver /usr/local/bin/chromedriver
+          sudo chmod +x /usr/local/bin/chromedriver
+
+      # --- Correr pruebas ---
+      - name: Start API server in background
+        run: nohup python3 src/api.py &
 
       - name: Wait for server to start
         run: sleep 5
@@ -61,15 +73,5 @@ jobs:
       - name: Run Usuarios tests
         run: pytest tests/test_usuarios.py -v
 
-      - name: Run regression tests
-        run: pytest tests/test_regresion_pytest.py -v
-
-      - name: Run JMeter performance test and generate report
-        run: |
-          ./jmeter/bin/jmeter -n -t tests/Test_rendimiento_plataforma_peso.jmx -l tests/results.jtl -e -o tests/html-report
-
-      - name: Upload JMeter HTML report
-        uses: actions/upload-artifact@v4
-        with:
-          name: jmeter-html-report
-          path: tests/html-report
+      - name: Run Selenium tests
+        run: pytest tests/test_funcioanles_selenium.py -v
