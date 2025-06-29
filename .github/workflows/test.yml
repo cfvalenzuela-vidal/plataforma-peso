@@ -20,6 +20,12 @@ jobs:
           python-version: '3.12'
           cache: 'pip'
 
+      - name: Cache Playwright browsers
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-browsers
+
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
@@ -36,8 +42,7 @@ jobs:
         shell: pwsh
 
       - name: Run tests
-        run: |
-          python tests/test_funcionales_selenium.py
+        run: python tests/test_funcionales_selenium.py
         env:
           FLASK_URL: "http://localhost:5000"
 
