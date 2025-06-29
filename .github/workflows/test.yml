@@ -50,3 +50,6 @@ jobs:
 
       - name: Run Usuarios tests
         run: pytest .\tests\test_usuarios.py -v
+
+      - name: Run regresion tests
+        run: pytest .\tests\test_regresion_pytest.py -v
