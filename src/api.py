@@ -23,25 +23,5 @@ def formulario_usuario():
 
     return render_template('formulario.html', usuarios=usuarios_info)
 
-"""
-import json
-
-@app.route('/api/usuarios', methods=['GET'])
-def obtener_usuarios():
-    return json.dumps(usuarios), 200, {'Content-Type': 'application/json'}
-
-@app.route('/api/usuarios/<string:nombre>', methods=['GET'])
-def obtener_usuario_por_nombre(nombre):
-    usuario = next((u for u in usuarios if u['nombre'].lower() == nombre.lower()), None)
-    if usuario:
-        return json.dumps(usuario), 200, {'Content-Type': 'application/json'}
-    return json.dumps({"error": "Usuario no encontrado"}), 404"""
-
-
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
-    #Orginal
-    # app.run(debug=True)
-    
-    #app.run(debug=True, host='0.0.0.0', port=5000)
-    #para probar api ejecutar: python -m app.api

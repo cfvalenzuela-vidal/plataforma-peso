@@ -35,10 +35,9 @@ jobs:
 
       - name: Start Flask server
         run: |
-          cd src
-          Start-Process -NoNewWindow -FilePath "python" -ArgumentList "-c", "from api import app; app.run(host='0.0.0.0', port=5000)"
-          Start-Sleep -Seconds 5
-          curl http://localhost:5000
+            Start-Process -NoNewWindow -FilePath python -ArgumentList "src/api.py"
+            Start-Sleep -Seconds 5
+            curl http://localhost:5000
         shell: pwsh
 
       - name: Run tests
