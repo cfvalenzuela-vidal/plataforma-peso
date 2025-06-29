@@ -38,11 +38,29 @@ jobs:
         run: |
           playwright install --with-deps chromium
 
-      - name: Start Flask server
+      - name: Start Flask server (background)
         run: |
-          Start-Process -NoNewWindow -FilePath python -ArgumentList "src/api.py"
-          Start-Sleep -Seconds 5
-          curl http://localhost:5000
+          $job = Start-Job -ScriptBlock {
+            cd src
+            python api.py
+          }
+
+          $maxRetries = 10
+          $retry = 0
+          while ($retry -lt $maxRetries) {
+            try {
+              curl http://localhost:5000 > $null
+              break
+            } catch {
+              Start-Sleep -Seconds 2
+              $retry++
+            }
+          }
+
+          if ($retry -eq $maxRetries) {
+            Write-Error "Flask server failed to start in time"
+            Exit 1
+          }
         shell: pwsh
 
       - name: Run tests
