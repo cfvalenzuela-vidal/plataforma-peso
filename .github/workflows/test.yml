@@ -48,7 +48,8 @@ jobs:
 
       - name: Start API server in background
         shell: pwsh
-        run: Start-Job -ScriptBlock { python src/api.py }
+        run: |
+          Start-Process python -ArgumentList 'src/api.py' -NoNewWindow -PassThru
 
       - name: List python processes and ports
         shell: pwsh

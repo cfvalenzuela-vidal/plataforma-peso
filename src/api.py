@@ -28,6 +28,5 @@ def formulario_usuario():
     return render_template('formulario.html', usuarios=usuarios_info)
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=False, use_reloader=False)
-
+    app.run(host="0.0.0.0", port=5000, debug=False, use_reloader=False, threaded=True)
 
