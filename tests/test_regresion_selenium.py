@@ -30,7 +30,7 @@ def test_flujo_completo(driver):
         driver.find_element(By.NAME, "peso").send_keys(str(peso))
         driver.find_element(By.XPATH, "//button[text()='Enviar']").click()
 
-        peso_str = f"{peso:.1f}"  # Formato con un decimal
+        peso_str = f"{peso:.1f}"
         esperado = f"{nombre}: {peso_str} kg"
 
         wait.until(lambda d: esperado in d.find_element(By.TAG_NAME, "body").text)
