@@ -56,4 +56,4 @@ jobs:
         run: pytest .\tests\test_usuarios.py -v
 
       - name: Run Selenium Functional Tests
-        run: pytest .\tests\test_funcionales_selenium.py -v
+        run: python .\tests\test_funcionales_selenium.py -v
