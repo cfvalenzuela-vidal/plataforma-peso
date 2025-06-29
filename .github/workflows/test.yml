@@ -14,30 +14,35 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Cache Playwright browsers
+        uses: actions/cache@v3
+        with:
+          path: C:/Users/runneradmin/AppData/Local/ms-playwright
+          key: playwright-browsers-${{ runner.os }}-v1
+          restore-keys: |
+            playwright-browsers-${{ runner.os }}-
+
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.12'
           cache: 'pip'
 
-      - name: Cache Playwright browsers
-        uses: actions/cache@v3
-        with:
-          path: ~/.cache/ms-playwright
-          key: ${{ runner.os }}-playwright-browsers
-
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install playwright pytest-playwright
+
+      - name: Install Playwright browsers (skip if cached)
+        run: |
           playwright install --with-deps chromium
 
       - name: Start Flask server
         run: |
-            Start-Process -NoNewWindow -FilePath python -ArgumentList "src/api.py"
-            Start-Sleep -Seconds 5
-            curl http://localhost:5000
+          Start-Process -NoNewWindow -FilePath python -ArgumentList "src/api.py"
+          Start-Sleep -Seconds 5
+          curl http://localhost:5000
         shell: pwsh
 
       - name: Run tests
