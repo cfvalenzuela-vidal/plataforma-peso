@@ -13,7 +13,7 @@ class Usuario:
 
     def actualizar_peso(self, nuevo_peso: float) -> None:
         # Aca la corrección, self.__peso = nuevo_peso y no restar 1kg
-        self.__peso = nuevo_peso - 1
+        self.__peso = nuevo_peso 
 
     def mostrar_informacion(self) -> None:
         print(f"Usuario: {self.__nombre}, Peso Actual: {self.__peso} kg")
