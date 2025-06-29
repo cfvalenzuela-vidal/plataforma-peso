@@ -68,7 +68,7 @@ jobs:
         run: pytest tests/test_usuarios.py -v
 
       - name: Run Selenium tests
-        run: pytest tests/test_funcioanles_selenium.py -v
+        run: pytest tests/test_funcionales_selenium.py -v
 
       - name: Upload Selenium screenshot
         if: always()
