@@ -3,6 +3,17 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
+# Para Ubuntu
+from selenium.webdriver.chrome.options import Options
+
+options = Options()
+options.add_argument('--headless')
+options.add_argument('--no-sandbox')
+options.add_argument('--disable-dev-shm-usage')
+
+driver = webdriver.Chrome(options=options)
+# Cierra ubuntu
+
 driver = webdriver.Chrome()
 wait = WebDriverWait(driver, 10)  # Espera máxima de 10 segundos
 driver.get("http://localhost:5000/")
