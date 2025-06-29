@@ -33,6 +33,7 @@ def test_flujo_completo(driver):
         peso_str = f"{peso:.1f}"
         esperado = f"{nombre}: {peso_str} kg"
 
+        # Esperar que el texto aparezca en el body
         wait.until(lambda d: esperado in d.find_element(By.TAG_NAME, "body").text)
         texto = driver.find_element(By.TAG_NAME, "body").text
         return texto
