@@ -22,7 +22,7 @@ jobs:
       - name: Upgrade pip and create cache dir
         run: |
           python -m pip install --upgrade pip
-          pip install --upgrade pip  # Por si acaso
+          pip install --upgrade pip
           echo "Pre-caching requirements to create cache folder"
           pip install --dry-run --ignore-installed -r requirements.txt
         shell: cmd
@@ -34,6 +34,7 @@ jobs:
           key: ${{ runner.os }}-pip-cache-v4-${{ hashFiles('**/requirements.txt') }}
           restore-keys: |
             ${{ runner.os }}-pip-cache-v4-
+
       - name: Install dependencies
         run: pip install -r requirements.txt
 
@@ -53,3 +54,11 @@ jobs:
 
       - name: Run regresion tests
         run: pytest .\tests\test_regresion_pytest.py -v
+
+      - name: Install JMeter
+        run: choco install jmeter -y
+        shell: cmd
+
+      - name: Run JMeter performance test
+        run: jmeter -n -t tests\Test_rendimiento_plataforma_peso.jmx -l tests\results.jtl
+        shell: cmd
