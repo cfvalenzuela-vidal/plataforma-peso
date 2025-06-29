@@ -23,7 +23,6 @@ def test_flujo_completo(driver):
     wait = WebDriverWait(driver, 10)
     driver.get("http://localhost:5000/")
 
-    # Función helper para ingresar datos
     def ingresar_peso(nombre, peso):
         wait.until(EC.presence_of_element_located((By.NAME, "nombre"))).clear()
         driver.find_element(By.NAME, "nombre").send_keys(nombre)
@@ -31,28 +30,21 @@ def test_flujo_completo(driver):
         driver.find_element(By.NAME, "peso").send_keys(str(peso))
         driver.find_element(By.XPATH, "//button[text()='Enviar']").click()
 
-        # Esperamos que aparezca el resultado actualizado, asumiendo que
-        # aparece en un elemento con id 'resultado' (ajusta si tu app usa otro selector)
-        wait.until(EC.text_to_be_present_in_element((By.ID, "resultado"), f"{nombre}: {peso}"))
+        peso_str = f"{peso:.1f}"  # Formato con un decimal
+        esperado = f"{nombre}: {peso_str} kg"
 
-        # Obtener el texto para la validación
-        texto = driver.find_element(By.ID, "resultado").text
+        wait.until(lambda d: esperado in d.find_element(By.TAG_NAME, "body").text)
+        texto = driver.find_element(By.TAG_NAME, "body").text
         return texto
 
-    # Usuario1 - 100kg
     texto1 = ingresar_peso("Usuario1", 100)
-    assert f"Usuario1: 100" in texto1
+    assert "Usuario1: 100.0 kg" in texto1
 
-    # Usuario2 - 100kg
     texto2 = ingresar_peso("Usuario2", 100)
-    assert f"Usuario2: 100" in texto2
+    assert "Usuario2: 100.0 kg" in texto2
 
-    # Usuario1 baja a 90.5kg
     texto3 = ingresar_peso("Usuario1", 90.5)
-    assert f"Usuario1: 90.5" in texto3
+    assert "Usuario1: 90.5 kg" in texto3
 
-    # Usuario2 sube a 105.5kg
     texto4 = ingresar_peso("Usuario2", 105.5)
-    assert f"Usuario2: 105.5" in texto4
-
-
+    assert "Usuario2: 105.5 kg" in texto4

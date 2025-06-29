@@ -31,7 +31,7 @@ def test_flujo_completo(driver):
         driver.find_element(By.XPATH, "//button[text()='Enviar']").click()
 
         # Esperar un segundo para que el servidor procese (ajustar si es necesario)
-        time.sleep(1)
+        time.sleep(5)
 
         # Hacer GET para obtener la página actualizada
         response = requests.get(base_url)
