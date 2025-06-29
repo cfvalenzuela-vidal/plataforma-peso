@@ -50,6 +50,12 @@ jobs:
         shell: pwsh
         run: Start-Job -ScriptBlock { python src/api.py }
 
+      - name: List python processes and ports
+        shell: pwsh
+        run: |
+          Get-Process python
+          netstat -ano | Select-String ":5000"
+
       - name: Wait for server to start (up to 30s)
         shell: pwsh
         run: |
@@ -70,12 +76,14 @@ jobs:
           } while ($attempt -lt $maxAttempts)
           Write-Error "Server did not start within timeout"
           exit 1
-
+          
+      - name: Run Selenium Functional Tests
+        run: python .\tests\test_funcionales_selenium.py
+        
       - name: Run API tests
         run: pytest .\tests\test_api.py -v
 
       - name: Run Usuarios tests
         run: pytest .\tests\test_usuarios.py -v
 
-      - name: Run Selenium Functional Tests
-        run: python .\tests\test_funcionales_selenium.py
+
