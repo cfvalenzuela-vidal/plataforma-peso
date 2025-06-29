@@ -14,18 +14,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Cache dependencies
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~\AppData\Local\pip\Cache
-            ~\AppData\Local\ms-playwright\
-          key: ${{ runner.os }}-${{ hashFiles('requirements.txt') }}
-
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.12'
+          cache: 'pip'
 
       - name: Install dependencies
         run: |
@@ -37,14 +30,9 @@ jobs:
       - name: Start Flask server
         run: |
           cd src
-          $flaskProcess = Start-Process -NoNewWindow -PassThru -FilePath "python" -ArgumentList "api.py"
-          echo "FLASK_PID=$($flaskProcess.Id)" | Out-File -FilePath $env:GITHUB_ENV -Append
-          Start-Sleep -Seconds 10  # Más tiempo para asegurar que el servidor esté listo
-        shell: pwsh
-
-      - name: Verify server is running
-        run: |
-          Invoke-WebRequest -Uri "http://localhost:5000" -UseBasicParsing
+          Start-Process -NoNewWindow -FilePath "python" -ArgumentList "-c", "from api import app; app.run(host='0.0.0.0', port=5000)"
+          Start-Sleep -Seconds 5
+          curl http://localhost:5000
         shell: pwsh
 
       - name: Run tests
@@ -52,12 +40,6 @@ jobs:
           python tests/test_funcionales_selenium.py
         env:
           FLASK_URL: "http://localhost:5000"
-
-      - name: Stop Flask server
-        run: |
-          taskkill /PID $env:FLASK_PID /F
-        shell: cmd
-        if: always()
 
       - name: Upload screenshot
         uses: actions/upload-artifact@v4
