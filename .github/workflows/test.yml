@@ -69,3 +69,9 @@ jobs:
 
       - name: Run Selenium test (script directo)
         run: python tests/test_funcionales_selenium.py
+
+      - name: Upload Selenium screenshot
+        uses: actions/upload-artifact@v4
+        with:
+          name: selenium-screenshot
+          path: tests/screenshot.png
