@@ -68,4 +68,4 @@ jobs:
         run: pytest tests/test_usuarios.py -v
 
       - name: Run Selenium test (script directo)
-        run: python tests/test_funcioanles_selenium.py
+        run: python tests/test_funcionales_selenium.py
