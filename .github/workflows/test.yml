@@ -46,14 +46,14 @@ jobs:
         run: echo "C:\ProgramData\chocolatey\bin" >> $env:GITHUB_PATH
         shell: pwsh
 
-      - name: Iniciar servidor API con logging
-        shell: pwsh
-        run: |
-          Start-Process python -ArgumentList 'src/api.py' -NoNewWindow -RedirectStandardOutput api.log -RedirectStandardError api.log -PassThru
-          Start-Sleep -Seconds 5
-          Get-Content api.log -Tail 40
-
-          Get-Content api.log -Tail 20
+      - name: Subir logs del servidor
+        uses: actions/upload-artifact@v4
+        with:
+          name: flask-server-logs
+          path: |
+            api.log
+            api_out.log
+            api_err.log
 
       - name: List python processes and ports
         shell: pwsh
