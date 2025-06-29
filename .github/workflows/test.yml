@@ -50,14 +50,26 @@ jobs:
         run: start /b python src/api.py
         shell: cmd
 
-      - name: Wait for server to start (up to 15s)
+      - name: Wait for server to start (up to 30s)
+        shell: pwsh
         run: |
-          for /l %%i in (1,1,15) do (
-            curl http://localhost:5000/ && exit /b 0
-            timeout /t 1 >nul
-          )
-          exit /b 1
-        shell: cmd
+          $maxAttempts = 30
+          $attempt = 0
+          do {
+            try {
+              $response = Invoke-WebRequest -Uri http://localhost:5000 -UseBasicParsing -TimeoutSec 2
+              if ($response.StatusCode -eq 200) {
+                Write-Host "Server is up!"
+                exit 0
+              }
+            } catch {
+              Write-Host "Server not ready yet... retrying"
+            }
+            Start-Sleep -Seconds 1
+            $attempt++
+          } while ($attempt -lt $maxAttempts)
+          Write-Error "Server did not start within timeout"
+          exit 1
 
       - name: Run API tests
         run: pytest .\tests\test_api.py -v
