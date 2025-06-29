@@ -39,22 +39,18 @@ jobs:
       - name: Install wget and unzip
         run: sudo apt-get update && sudo apt-get install -y wget unzip
 
-      - name: Install Chrome
+      - name: Install Chrome 124
         run: |
-          sudo apt-get update
-          sudo apt-get install -y google-chrome-stable || true
+          wget https://storage.googleapis.com/chrome-for-testing-public/124.0.6367.91/linux/x64/chrome-linux64.zip
+          unzip chrome-linux64.zip
+          sudo mv chrome-linux64 /opt/chrome
+          sudo ln -s /opt/chrome/chrome /usr/bin/google-chrome
 
-      - name: Install Chromedriver
+      - name: Install Chromedriver 124
         run: |
-          CHROME_VERSION_FULL=$(google-chrome --version | grep -oP '\d+\.\d+\.\d+\.\d+')
-          CHROME_MAJOR_VERSION=$(echo $CHROME_VERSION_FULL | cut -d. -f1)
-          echo "Chrome full version: $CHROME_VERSION_FULL"
-          echo "Chrome major version: $CHROME_MAJOR_VERSION"
-          CHROMEDRIVER_VERSION=$(curl -sS https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$CHROME_MAJOR_VERSION)
-          echo "Chromedriver version: $CHROMEDRIVER_VERSION"
-          wget -N https://chromedriver.storage.googleapis.com/${CHROMEDRIVER_VERSION}/chromedriver_linux64.zip -P ~/
-          unzip -o ~/chromedriver_linux64.zip -d ~/
-          sudo mv -f ~/chromedriver /usr/local/bin/chromedriver
+          wget https://storage.googleapis.com/chrome-for-testing-public/124.0.6367.91/linux/x64/chromedriver-linux64.zip
+          unzip chromedriver-linux64.zip
+          sudo mv chromedriver-linux64/chromedriver /usr/local/bin/chromedriver
           sudo chmod +x /usr/local/bin/chromedriver
 
       - name: Start API server in background
