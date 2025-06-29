@@ -38,10 +38,18 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
+      - name: Mostrar procesos que usan el puerto 5000
+        shell: cmd
+        run: netstat -ano | findstr :5000
+
       - name: Start API server in background
         run: start /b python src/api.py
         shell: cmd
 
+      - name: Mostrar procesos que usan el puerto 5000
+        shell: cmd
+        run: netstat -ano | findstr :5000
+        
       - name: Wait for server to start
         run: ping -n 6 127.0.0.1 > nul
         shell: cmd
@@ -55,17 +63,3 @@ jobs:
       - name: Run regresion tests
         run: pytest .\tests\test_regresion_pytest.py -v
 
-      - name: Install JMeter
-        run: choco install jmeter -y
-        shell: cmd
-
-      - name: Run JMeter performance test and generate report
-        run: |
-          jmeter -n -t tests\Test_rendimiento_plataforma_peso.jmx -l tests\results.jtl -e -o tests\html-report
-        shell: cmd
-
-      - name: Subir reporte JMeter HTML 
-        uses: actions/upload-artifact@v4
-        with:
-          name: jmeter-html-report
-          path: tests/html-report
