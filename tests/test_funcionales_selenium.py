@@ -1,9 +1,20 @@
 from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-driver = webdriver.Chrome()
+chrome_options = Options()
+chrome_options.add_argument("--headless")  # Ejecutar sin UI
+chrome_options.add_argument("--no-sandbox")  # Recomendado en entornos CI
+chrome_options.add_argument("--disable-dev-shm-usage")  # Evita problemas con /dev/shm
+chrome_options.add_argument("--disable-gpu")  # Opcional, para evitar errores gráficos
+
+# Si tienes chromedriver en PATH, no es necesario poner la ruta explícita.
+service = Service()
+
+driver = webdriver.Chrome(service=service, options=chrome_options)
 wait = WebDriverWait(driver, 10)  # Espera máxima de 10 segundos
 driver.get("http://localhost:5000/")
 
