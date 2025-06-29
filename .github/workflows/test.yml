@@ -19,11 +19,9 @@ jobs:
         with:
           python-version: 3.12
 
-      - name: Upgrade pip and create cache dir
+      - name: Prewarm pip cache
         run: |
           python -m pip install --upgrade pip
-          pip install --upgrade pip  # Por si acaso
-          echo "Pre-caching requirements to create cache folder"
           pip install --dry-run --ignore-installed -r requirements.txt
         shell: cmd
 
@@ -38,6 +36,16 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
+      - name: Install Chrome and ChromeDriver
+        uses: browser-actions/setup-chrome@v1
+        with:
+          chrome-version: stable
+
+      - name: Install ChromeDriver
+        run: |
+          choco install chromedriver --version=114.0.5735.90 -y
+        shell: powershell
+
       - name: Start API server in background
         run: start /b python src/api.py
         shell: cmd
@@ -51,3 +59,6 @@ jobs:
 
       - name: Run Usuarios tests
         run: pytest .\tests\test_usuarios.py -v
+
+      - name: Run Selenium Functional Tests
+        run: pytest .\tests\test_funcionales_selenium.py -v
