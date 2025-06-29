@@ -36,6 +36,11 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
+      - name: Install JMeter
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y jmeter
+
       - name: Start API server in background
         run: |
           nohup python3 src/api.py &
@@ -54,3 +59,13 @@ jobs:
 
       - name: Run regression tests
         run: pytest tests/test_regresion_pytest.py -v
+
+      - name: Run JMeter performance test and generate report
+        run: |
+          jmeter -n -t tests/Test_rendimiento_plataforma_peso.jmx -l tests/results.jtl -e -o tests/html-report
+
+      - name: Upload JMeter HTML report
+        uses: actions/upload-artifact@v4
+        with:
+          name: jmeter-html-report
+          path: tests/html-report
