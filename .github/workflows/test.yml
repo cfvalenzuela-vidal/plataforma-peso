@@ -1,0 +1,36 @@
+name: Test Plataforma Peso
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  test:
+    runs-on: windows-latest  # Entorno Windows 11 mismo que en PC local
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Instalacion de Python 3.12
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+
+      - name: Instalamos dependencias
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install playwright pytest-playwright  # Instala ambos paquetes
+          playwright install --with-deps chromium  # Instala Chromium y sus dependencia
+
+      - name: Ejecutar prueba
+        run: python tests/test_funcionales_selenium.py
+
+      - name: Subir screenshot
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshot-resultado
+          path: screenshot.png
