@@ -8,36 +8,58 @@ on:
 
 jobs:
   test:
-    runs-on: windows-latest  # Entorno Windows 11 mismo que en PC local
+    runs-on: windows-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Instalacion de Python 3.12
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~\AppData\Local\pip\Cache
+            ~\AppData\Local\ms-playwright\
+          key: ${{ runner.os }}-${{ hashFiles('requirements.txt') }}
+
+      - name: Setup Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.12'
 
-      - name: Instalamos dependencias
+      - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          pip install playwright pytest-playwright  # Instala ambos paquetes
-          playwright install --with-deps chromium  # Instala Chromium y sus dependencia
+          pip install playwright pytest-playwright
+          playwright install --with-deps chromium
 
-      - name: Levantar servidor Flask en segundo plano
+      - name: Start Flask server
         run: |
           cd src
-          Start-Process -NoNewWindow -FilePath "python" -ArgumentList "api.py"
-          cd ..
-          Start-Sleep -Seconds 5
+          $flaskProcess = Start-Process -NoNewWindow -PassThru -FilePath "python" -ArgumentList "api.py"
+          echo "FLASK_PID=$($flaskProcess.Id)" | Out-File -FilePath $env:GITHUB_ENV -Append
+          Start-Sleep -Seconds 10  # Más tiempo para asegurar que el servidor esté listo
         shell: pwsh
 
-      - name: Ejecutar prueba
-        run: python tests/test_funcionales_selenium.py
+      - name: Verify server is running
+        run: |
+          Invoke-WebRequest -Uri "http://localhost:5000" -UseBasicParsing
+        shell: pwsh
 
-      - name: Subir screenshot
+      - name: Run tests
+        run: |
+          python tests/test_funcionales_selenium.py
+        env:
+          FLASK_URL: "http://localhost:5000"
+
+      - name: Stop Flask server
+        run: |
+          taskkill /PID $env:FLASK_PID /F
+        shell: cmd
+        if: always()
+
+      - name: Upload screenshot
         uses: actions/upload-artifact@v4
         with:
           name: screenshot-resultado
