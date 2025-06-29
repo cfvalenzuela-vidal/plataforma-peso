@@ -26,6 +26,14 @@ jobs:
           pip install playwright pytest-playwright  # Instala ambos paquetes
           playwright install --with-deps chromium  # Instala Chromium y sus dependencia
 
+      - name: Levantar servidor Flask en segundo plano
+        run: |
+          cd src
+          Start-Process -NoNewWindow -FilePath "python" -ArgumentList "api.py"
+          cd ..
+          Start-Sleep -Seconds 5
+        shell: pwsh
+
       - name: Ejecutar prueba
         run: python tests/test_funcionales_selenium.py
 
