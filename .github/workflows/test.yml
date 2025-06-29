@@ -59,7 +59,7 @@ jobs:
       - name: Wait for server to start (up to 30s)
         shell: pwsh
         run: |
-          $maxAttempts = 30
+          $maxAttempts = 5
           $attempt = 0
           do {
             try {
@@ -76,7 +76,7 @@ jobs:
           } while ($attempt -lt $maxAttempts)
           Write-Error "Server did not start within timeout"
           exit 1
-          
+
       - name: Run Selenium Functional Tests
         run: python .\tests\test_funcionales_selenium.py
         
