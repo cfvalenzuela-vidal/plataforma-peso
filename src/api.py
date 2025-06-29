@@ -1,7 +1,11 @@
 from flask import Flask, render_template, request, redirect, url_for
-from Usuario import Usuario  # ← Importación agregada
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.dirname(__file__)))
+from Usuario import Usuario
 
 app = Flask(__name__)
+
 
 usuarios = []
 
