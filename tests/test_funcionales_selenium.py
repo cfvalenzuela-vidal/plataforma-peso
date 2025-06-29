@@ -1,3 +1,4 @@
+import time
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
@@ -20,17 +21,21 @@ def test_selenium_flow():
     wait.until(EC.presence_of_element_located((By.NAME, "nombre"))).send_keys("Usuario1")
     driver.find_element(By.NAME, "peso").send_keys("100")
     driver.find_element(By.XPATH, "//button[text()='Enviar']").click()
+    time.sleep(5)  # espera 5 segundos
 
     wait.until(EC.presence_of_element_located((By.NAME, "nombre"))).send_keys("Usuario2")
     driver.find_element(By.NAME, "peso").send_keys("100")
     driver.find_element(By.XPATH, "//button[text()='Enviar']").click()
+    time.sleep(5)
 
     wait.until(EC.presence_of_element_located((By.NAME, "nombre"))).send_keys("Usuario1")
     driver.find_element(By.NAME, "peso").send_keys("90.5")
     driver.find_element(By.XPATH, "//button[text()='Enviar']").click()
+    time.sleep(5)
 
     wait.until(EC.presence_of_element_located((By.NAME, "nombre"))).send_keys("Usuario2")
     driver.find_element(By.NAME, "peso").send_keys("105.5")
     driver.find_element(By.XPATH, "//button[text()='Enviar']").click()
+    time.sleep(5)
 
     driver.quit()
