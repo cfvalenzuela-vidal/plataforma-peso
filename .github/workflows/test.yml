@@ -36,11 +36,6 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Instalamos dependencias
-        run: |
-          pip install playwright pytest-playwright  # Instala ambos paquetes
-          playwright install --with-deps chromium  # Instala Chromium y sus dependencia
-
       - name: Start API server in background
         run: start /b python src/api.py
         shell: cmd
