@@ -1,12 +1,17 @@
 from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
+# Configurar Chrome en modo headless
+options = Options()
+options.add_argument("--headless")
+options.add_argument("--disable-gpu")
+options.add_argument("--no-sandbox")
 
-
-driver = webdriver.Chrome()
-wait = WebDriverWait(driver, 10)  # Espera máxima de 10 segundos
+driver = webdriver.Chrome(options=options)
+wait = WebDriverWait(driver, 10)
 driver.get("http://localhost:5000/")
 
 # Usuario1 - 100kg
@@ -30,3 +35,5 @@ driver.find_element(By.NAME, "peso").send_keys("105.5")
 driver.find_element(By.XPATH, "//button[text()='Enviar']").click()
 
 driver.quit()
+
+
