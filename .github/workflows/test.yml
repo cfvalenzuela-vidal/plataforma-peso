@@ -78,7 +78,7 @@ jobs:
         run: java -version
 
       - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@v1.13
+        uses: SonarSource/sonarcloud-github-action@latest
         with:
           projectBaseDir: .
         env:
