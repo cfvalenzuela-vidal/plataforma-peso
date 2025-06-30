@@ -98,9 +98,21 @@ jobs:
       - name: Verificar Java version
         run: java -version
 
+      - name: Install dependencies
+        run: |
+          pip install pytest pytest-cov  # Instala las herramientas de cobertura
+
+      - name: Run tests with coverage
+        run: |
+          pytest --cov=./ --cov-report=xml:coverage.xml  # Genera el informe XML
+
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@v5
         with:
           projectBaseDir: .
+          # Configuración específica para Python
+          args: >
+            -Dsonar.python.coverage.reportPaths=coverage.xml
+            -Dsonar.coverage.exclusions=**/test_*.py  # Opcional: excluye tests de la cobertura
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
