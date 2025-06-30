@@ -16,11 +16,9 @@ def test_selenium_flow():
     service = Service()
     driver = webdriver.Chrome(service=service, options=chrome_options)
     wait = WebDriverWait(driver, 10)
-    driver.get("http://localhost:5000/")
 
-    # Función para ingresar datos y enviar
     def enviar_datos(nombre, peso):
-        print(f"Enviando: {nombre}, {peso}")
+        driver.get("http://localhost:5000/")
         nombre_input = wait.until(EC.presence_of_element_located((By.NAME, "nombre")))
         nombre_input.clear()
         nombre_input.send_keys(nombre)
@@ -31,8 +29,10 @@ def test_selenium_flow():
 
         driver.find_element(By.XPATH, "//button[text()='Enviar']").click()
         time.sleep(3)
-        driver.refresh()  # Recarga la página para resetear el formulario
-        time.sleep(3)
+
+        usuarios_texts = driver.find_elements(By.CSS_SELECTOR, "body p")
+        if usuarios_texts:
+            print("Último usuario mostrado:", usuarios_texts[-1].text)
 
     enviar_datos("Usuario1", "100")
     enviar_datos("Usuario2", "100")
