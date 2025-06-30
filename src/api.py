@@ -5,6 +5,7 @@ sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 from Usuario import Usuario
 
 app = Flask(__name__)
+app.config['WTF_CSRF_ENABLED'] = False 
 
 
 usuarios = []
