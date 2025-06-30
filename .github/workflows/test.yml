@@ -67,7 +67,11 @@ jobs:
       - name: Test conexión to Flask
         run: curl http://127.0.0.1:5000/
 
-##ACA CODIGO
+      - name: Correr API tests
+        run: pytest tests/test_api.py -v
+
+      - name: Correr Usuarios tests
+        run: pytest tests/test_usuarios.py -v
 
       - name: Instalar Java 17
         uses: actions/setup-java@v3
