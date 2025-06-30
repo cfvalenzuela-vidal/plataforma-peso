@@ -35,6 +35,12 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
+      - name: Install JMeter 5.6.3
+        run: |
+          wget https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-5.6.3.zip
+          unzip apache-jmeter-5.6.3.zip
+          mv apache-jmeter-5.6.3 jmeter
+
       - name: Install wget and unzip
         run: sudo apt-get update && sudo apt-get install -y wget unzip
 
@@ -66,6 +72,16 @@ jobs:
 
       - name: Run Usuarios tests
         run: pytest tests/test_usuarios.py -v
+
+      - name: Run JMeter performance test and generate report
+        run: |
+          ./jmeter/bin/jmeter -n -t tests/Test_rendimiento_plataforma_peso.jmx -l tests/results.jtl -e -o tests/html-report
+
+      - name: Upload JMeter HTML report
+        uses: actions/upload-artifact@v4
+        with:
+          name: jmeter-html-report
+          path: tests/html-report
 
       - name: Run Selenium test_funcionales_selenium
         run: pytest tests/test_funcionales_selenium.py -v
