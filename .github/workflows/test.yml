@@ -77,17 +77,9 @@ jobs:
       - name: Verify Java version
         run: java -version
 
-      - name: Download and unzip SonarScanner
-        run: |
-          wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.8.0.2856-linux.zip
-          unzip sonar-scanner-cli-4.8.0.2856-linux.zip
-
-      - name: Run SonarCloud Scan
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@v1.13
+        with:
+          projectBaseDir: .
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: |
-          export JAVA_HOME=$JAVA_HOME
-          export PATH=$JAVA_HOME/bin:$(pwd)/sonar-scanner-4.8.0.2856-linux/bin:$PATH
-          java -version
-          which java
-          sonar-scanner -Dsonar.login=$SONAR_TOKEN
