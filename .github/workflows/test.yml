@@ -14,17 +14,17 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up Python 3.12
+      - name: Instalar 3.12
         uses: actions/setup-python@v4
         with:
           python-version: 3.12
 
-      - name: Upgrade pip and pre-cache requirements
+      - name: Actualizar pip y pre-cache 
         run: |
           python -m pip install --upgrade pip
           pip install --dry-run --ignore-installed -r requirements.txt
 
-      - name: Cache pip packages
+      - name: Cache pip paquetes 
         uses: actions/cache@v3
         with:
           path: ~/.cache/pip
@@ -32,49 +32,70 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pip-cache-v4-
 
-      - name: Install dependencies
+      - name: Instalar dependencias
         run: pip install -r requirements.txt
 
-     # - name: Install JMeter 5.6.3
-     #   run: |
-     #     wget https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-5.6.3.zip
-     #     unzip apache-jmeter-5.6.3.zip
-     #     mv apache-jmeter-5.6.3 jmeter
+      - name: Install JMeter 5.6.3 
+        run: |
+          wget https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-5.6.3.zip
+          unzip apache-jmeter-5.6.3.zip
+          mv apache-jmeter-5.6.3 jmeter
 
-      #- name: Install wget and unzip
-      #  run: sudo apt-get update && sudo apt-get install -y wget unzip
+      - name: Instalar wget and unzip
+        run: sudo apt-get update && sudo apt-get install -y wget unzip
 
-      #- name: Install Chrome 125 and Chromedriver 125
-      #  run: |
+      - name: Instalar Chrome 125 and Chromedriver 125
+        run: |
           # Descargar Chrome
-      #    wget https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/125.0.6422.141/linux64/chrome-linux64.zip
-      #    unzip -q chrome-linux64.zip
-      #    sudo mv chrome-linux64 /opt/chrome
-      #    sudo ln -sf /opt/chrome/chrome /usr/bin/google-chrome
+          wget https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/125.0.6422.141/linux64/chrome-linux64.zip
+          unzip -q chrome-linux64.zip
+          sudo mv chrome-linux64 /opt/chrome
+          sudo ln -sf /opt/chrome/chrome /usr/bin/google-chrome
 
           # Descargar Chromedriver
-      #    wget https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/125.0.6422.141/linux64/chromedriver-linux64.zip
-      #    unzip -q chromedriver-linux64.zip
-      #    sudo mv chromedriver-linux64/chromedriver /usr/local/bin/chromedriver
-      #    sudo chmod +x /usr/local/bin/chromedriver
+          wget https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/125.0.6422.141/linux64/chromedriver-linux64.zip
+          unzip -q chromedriver-linux64.zip
+          sudo mv chromedriver-linux64/chromedriver /usr/local/bin/chromedriver
+          sudo chmod +x /usr/local/bin/chromedriver
 
-      - name: Start API server in background
+      - name: Start API server in segundo plano
         run: nohup python3 src/api.py &
 
-      - name: Wait for server to start
+      - name: Esperar para iniciar
         run: sleep 5
 
-      - name: Test connection to Flask
+      - name: Test conexión to Flask
         run: curl http://127.0.0.1:5000/
 
-##ACA
-      - name: Set up Java 17
+      - name: Correr API tests
+        run: pytest tests/test_api.py -v
+
+      - name: Correr Usuarios tests
+        run: pytest tests/test_usuarios.py -v
+
+      - name: Correr JMeter con test y generar reporte
+        run: |
+          ./jmeter/bin/jmeter -n -t tests/Test_rendimiento_plataforma_peso.jmx -l tests/results.jtl -e -o tests/html-report
+
+      - name: Subir JMeter HTML reporte
+        uses: actions/upload-artifact@v4
+        with:
+          name: jmeter-html-report
+          path: tests/html-report
+
+      - name: Correr Selenium test_funcionales_selenium
+        run: pytest tests/test_funcionales_selenium.py -v
+
+      - name: Correr Selenium test_regresion_selenium
+        run: pytest tests/test_regresion_selenium.py -v
+
+      - name: Instalar Java 17
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Verify Java version
+      - name: Verificar Java version
         run: java -version
 
       - name: SonarCloud Scan
