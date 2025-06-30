@@ -17,7 +17,14 @@ def test_selenium_flow():
     driver = webdriver.Chrome(service=service, options=chrome_options)
     wait = WebDriverWait(driver, 10)
 
-    def enviar_datos(nombre, peso):
+    usuarios_a_enviar = [
+        ("Usuario1_1", "100"),
+        ("Usuario2_2", "100"),
+        ("Usuario1_3", "90.5"),
+        ("Usuario2_4", "105.5"),
+    ]
+
+    for nombre, peso in usuarios_a_enviar:
         driver.get("http://localhost:5000/")
         nombre_input = wait.until(EC.presence_of_element_located((By.NAME, "nombre")))
         nombre_input.clear()
@@ -30,13 +37,11 @@ def test_selenium_flow():
         driver.find_element(By.XPATH, "//button[text()='Enviar']").click()
         time.sleep(3)
 
+        # Verificamos que el último usuario mostrado sea el esperado
         usuarios_texts = driver.find_elements(By.CSS_SELECTOR, "body p")
         if usuarios_texts:
-            print("Último usuario mostrado:", usuarios_texts[-1].text)
-
-    enviar_datos("Usuario1", "100")
-    enviar_datos("Usuario2", "100")
-    enviar_datos("Usuario1", "90.5")
-    enviar_datos("Usuario2", "105.5")
+            ultimo_usuario = usuarios_texts[-1].text
+            print(f"Último usuario mostrado: {ultimo_usuario}")
+            assert nombre in ultimo_usuario and peso in ultimo_usuario
 
     driver.quit()
