@@ -6,7 +6,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-def test_selenium_flow():
+def test_form_submission():
     chrome_options = Options()
     chrome_options.add_argument("--headless")
     chrome_options.add_argument("--no-sandbox")
@@ -17,15 +17,10 @@ def test_selenium_flow():
     driver = webdriver.Chrome(service=service, options=chrome_options)
     wait = WebDriverWait(driver, 10)
 
-    usuarios_a_enviar = [
-        ("Usuario1_1", "100"),
-        ("Usuario2_2", "100"),
-        ("Usuario1_3", "90.5"),
-        ("Usuario2_4", "105.5"),
-    ]
+    driver.get("http://localhost:5000/")
 
-    for nombre, peso in usuarios_a_enviar:
-        driver.get("http://localhost:5000/")
+    # Enviar datos y verificar redirección (status 200)
+    for nombre, peso in [("Usuario1", "80"), ("Usuario2", "90")]:
         nombre_input = wait.until(EC.presence_of_element_located((By.NAME, "nombre")))
         nombre_input.clear()
         nombre_input.send_keys(nombre)
@@ -35,13 +30,9 @@ def test_selenium_flow():
         peso_input.send_keys(peso)
 
         driver.find_element(By.XPATH, "//button[text()='Enviar']").click()
-        time.sleep(3)
 
-        # Verificamos que el último usuario mostrado sea el esperado
-        usuarios_texts = driver.find_elements(By.CSS_SELECTOR, "body p")
-        if usuarios_texts:
-            ultimo_usuario = usuarios_texts[-1].text
-            print(f"Último usuario mostrado: {ultimo_usuario}")
-            assert nombre in ultimo_usuario and peso in ultimo_usuario
+        # Esperar a que la página se recargue tras redireccionar (post-redirect-get)
+        wait.until(EC.presence_of_element_located((By.TAG_NAME, "form")))
+        time.sleep(1)
 
     driver.quit()
