@@ -61,11 +61,11 @@ jobs:
       - name: Test connection to Flask
         run: curl http://127.0.0.1:5000/
 
-      #- name: Run API tests
-      #  run: pytest tests/test_api.py -v
+       name: Run API tests
+       run: pytest tests/test_api.py -v
 
-      #- name: Run Usuarios tests
-      #  run: pytest tests/test_usuarios.py -v
+      - name: Run Usuarios tests
+        run: pytest tests/test_usuarios.py -v
 
       - name: Run Selenium tests
         run: pytest tests/test_funcionales_selenium.py -v
@@ -76,4 +76,16 @@ jobs:
         with:
           name: selenium-screenshot
           path: tests/screenshot.png
+
+      - name: Run Selenium tests
+        run: pytest tests/test_regresion_selenium.py -v
+      
+      - name: Upload Selenium screenshot2
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: selenium-screenshot2
+          path: tests/screenshot2.png
+
+
 
