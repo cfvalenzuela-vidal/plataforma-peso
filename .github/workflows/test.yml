@@ -89,20 +89,12 @@ jobs:
       - name: Run Selenium test_regresion_selenium
         run: pytest tests/test_regresion_selenium.py -v
       
-      - name: SonarQube Scan
+      - name: SonarCloud Scan
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         run: |
-          # Descargar y descomprimir Sonar Scanner CLI
           wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.8.0.2856-linux.zip
           unzip sonar-scanner-cli-4.8.0.2856-linux.zip
           export PATH="$PATH:$(pwd)/sonar-scanner-4.8.0.2856-linux/bin"
-
-          # Ejecutar Sonar Scanner
-          sonar-scanner \
-            -Dsonar.projectKey=TU_PROYECTO_KEY \
-            -Dsonar.sources=. \
-            -Dsonar.host.url=$SONAR_HOST_URL \
-            -Dsonar.login=$SONAR_TOKEN
+          sonar-scanner -Dsonar.login=$SONAR_TOKEN
 
