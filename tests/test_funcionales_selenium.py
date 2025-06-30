@@ -18,52 +18,25 @@ def test_selenium_flow():
     wait = WebDriverWait(driver, 10)
     driver.get("http://localhost:5000/")
 
-    # Usuario1 - 100kg
-    nombre_input = wait.until(EC.presence_of_element_located((By.NAME, "nombre")))
-    nombre_input.clear()
-    nombre_input.send_keys("Usuario1")
+    # Función para ingresar datos y enviar
+    def enviar_datos(nombre, peso):
+        print(f"Enviando: {nombre}, {peso}")
+        nombre_input = wait.until(EC.presence_of_element_located((By.NAME, "nombre")))
+        nombre_input.clear()
+        nombre_input.send_keys(nombre)
 
-    peso_input = driver.find_element(By.NAME, "peso")
-    peso_input.clear()
-    peso_input.send_keys("100")
+        peso_input = driver.find_element(By.NAME, "peso")
+        peso_input.clear()
+        peso_input.send_keys(peso)
 
-    driver.find_element(By.XPATH, "//button[text()='Enviar']").click()
-    time.sleep(5)
+        driver.find_element(By.XPATH, "//button[text()='Enviar']").click()
+        time.sleep(3)
+        driver.refresh()  # Recarga la página para resetear el formulario
+        time.sleep(3)
 
-    # Usuario2 - 100kg
-    nombre_input = wait.until(EC.presence_of_element_located((By.NAME, "nombre")))
-    nombre_input.clear()
-    nombre_input.send_keys("Usuario2")
-
-    peso_input = driver.find_element(By.NAME, "peso")
-    peso_input.clear()
-    peso_input.send_keys("100")
-
-    driver.find_element(By.XPATH, "//button[text()='Enviar']").click()
-    time.sleep(5)
-
-    # Usuario1 bajo a 90.5kg
-    nombre_input = wait.until(EC.presence_of_element_located((By.NAME, "nombre")))
-    nombre_input.clear()
-    nombre_input.send_keys("Usuario1")
-
-    peso_input = driver.find_element(By.NAME, "peso")
-    peso_input.clear()
-    peso_input.send_keys("90.5")
-
-    driver.find_element(By.XPATH, "//button[text()='Enviar']").click()
-    time.sleep(5)
-
-    # Usuario2 subio a 105.5kg
-    nombre_input = wait.until(EC.presence_of_element_located((By.NAME, "nombre")))
-    nombre_input.clear()
-    nombre_input.send_keys("Usuario2")
-
-    peso_input = driver.find_element(By.NAME, "peso")
-    peso_input.clear()
-    peso_input.send_keys("105.5")
-
-    driver.find_element(By.XPATH, "//button[text()='Enviar']").click()
-    time.sleep(5)
+    enviar_datos("Usuario1", "100")
+    enviar_datos("Usuario2", "100")
+    enviar_datos("Usuario1", "90.5")
+    enviar_datos("Usuario2", "105.5")
 
     driver.quit()
