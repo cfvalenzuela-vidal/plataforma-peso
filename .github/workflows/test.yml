@@ -84,15 +84,16 @@ jobs:
 
       - name: Run tests with coverage
         run: |
-          pytest --cov=./ --cov-report=xml:coverage.xml  # Genera el informe XML
+          # Instala dependencias y genera cobertura (incluyendo archivos fuente)
+          pip install pytest pytest-cov
+          pytest --cov=src --cov-report=xml:coverage.xml  # Ajusta "src" por tu carpeta de código fuente
 
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@v5
         with:
-          projectBaseDir: .
-          # Configuración específica para Python
           args: >
             -Dsonar.python.coverage.reportPaths=coverage.xml
-            -Dsonar.coverage.exclusions=**/test_*.py  # Opcional: excluye tests de la cobertura
+            -Dsonar.sources=src  # Mismo nombre que en --cov
+            -Dsonar.tests=tests  # Opcional: carpeta de tests
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
